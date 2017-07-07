@@ -4,17 +4,18 @@ cmd_log=`echo $0 $@`
 echo "cmd log is ${cmd_log}"
 
 # step 1 test if there are the right number of arguments 
-if [[ "$#" -ne 5 ]]; then
-    echo "Usage: $0 lua_scripts_dir data_dir cache_dir nGPU netType(alexnet | overfeat | alexnetowtbn | vgg | googlenet)" >&2
+if [[ "$#" -ne 6 ]]; then
+    echo "Usage: $0 lua_scripts_dir data_dir cache_dir nGPU batchsize netType(alexnet | overfeat | alexnetowtbn | vgg | googlenet)" >&2
     exit 1
 fi 
 lua_scripts_dir=$1
 data_dir=$2
 cache_dir=$3
 nGPU=$4
-bs=128
+bs=$5
+epochSize=`echo  "scale=0; 1280000/$bs" | bc -l`
 nEpochs=55
-netType=$5
+netType=$6
 
 jobid=${netType}_bs${bs}_nEpochs${nEpochs}_nGPU${nGPU}
 timestamp=`date +"%Y-%m-%d-%T"`
@@ -28,7 +29,7 @@ rm -fr log.std*
 ln -s ${lua_scripts_dir}/*.lua ./
 ln -s ${lua_scripts_dir}/models ./
 
-cmdline="(th main.lua -data ${data_dir} -cache ${cache_dir} -nGPU ${nGPU} -nDonkeys 12 -nEpochs ${nEpochs} -batchSize ${bs} -epochSize 10000 -netType ${netType} >  log.stdout) &> log.stderr"
+cmdline="(th main.lua -data ${data_dir} -cache ${cache_dir} -nGPU ${nGPU} -nDonkeys 12 -nEpochs ${nEpochs} -batchSize ${bs} -epochSize ${epochSize} -netType ${netType} >  log.stdout) &> log.stderr"
 
 echo $cmd_log >> ./cmdlog
 
