@@ -4,15 +4,15 @@ cmd_log=`echo $0 $@`
 echo "cmd log is ${cmd_log}"
 
 # step 1 test if there are the right number of arguments 
-if [[ "$#" -ne 4 ]]; then
-    echo "Usage: $0 lua_scripts_dir data_dir depth nGPU" >&2
+if [[ "$#" -ne 5 ]]; then
+    echo "Usage: $0 lua_scripts_dir data_dir depth nGPU bs" >&2
     exit 1
 fi 
 lua_scripts_dir=$1
 data_dir=$2
 depth=$3
 nGPU=$4
-bs=256
+bs=$5
 nEpochs=90
 netType=resnet${depth}
 
